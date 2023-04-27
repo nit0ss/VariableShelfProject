@@ -1,0 +1,9 @@
+/**
+ * 
+ */
+/**
+ * @author nito
+ *
+ */
+module ShelfGenerator {
+}
