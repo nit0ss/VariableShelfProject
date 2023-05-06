@@ -19,7 +19,7 @@ public class TopShelve {
 
 	public  String getObjVector() {
 
-		String result = "";
+		String result = "\n";
 		
 		//8 vertex 8 duples
 		double x1 = 0.00 ;

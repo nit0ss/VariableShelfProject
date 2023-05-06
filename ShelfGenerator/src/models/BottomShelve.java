@@ -19,7 +19,7 @@ public class BottomShelve {
 
 	public  String getObjVector() {
 
-		String result = "";
+		String result = "\n";
 		
 		//8 vertex 8 duples
 		double x1 = 0.00 ;
@@ -81,7 +81,7 @@ public class BottomShelve {
 		result += "f " + face6v1 + " " + face6v2 + " " + face6v3 + " " + face6v4 + "\n";
 
 
-		System.out.println("Created Top Shelve with the coordinates :\n" + result);
+		System.out.println("Created Bottom Shelve with the coordinates :\n" + result);
 		return result;
 	}
 }
