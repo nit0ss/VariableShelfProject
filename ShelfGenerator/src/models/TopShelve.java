@@ -54,7 +54,7 @@ public class TopShelve {
 		double y8 = totalLength-width;
 		double z8 = zAxis;
 		
-		
+		result += "\n#Vertex for TopShelve\n";
 		result += "v " + x1 + " " + y1 + " " + z1 + "\n";
         result += "v " + x2 + " " + y2 + " " + z2 + "\n";
         result += "v " + x3 + " " + y3 + " " + z3 + "\n";
@@ -73,6 +73,7 @@ public class TopShelve {
 		int face6v1 = 1, face6v2 = 4, face6v3 = 8, face6v4 = 5;
 
 		// Append the face indices to the result string
+		result += "\n#Faces for TopShelve\n";
 		result += "f " + face1v1 + " " + face1v2 + " " + face1v3 + " " + face1v4 + "\n";
 		result += "f " + face2v1 + " " + face2v2 + " " + face2v3 + " " + face2v4 + "\n";
 		result += "f " + face3v1 + " " + face3v2 + " " + face3v3 + " " + face3v4 + "\n";
