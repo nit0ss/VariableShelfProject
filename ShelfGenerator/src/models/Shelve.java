@@ -112,7 +112,7 @@ public class Shelve {
 		result += "f " + face5v1 + " " + face5v2 + " " + face5v3 + " " + face5v4 + "\n";
 		result += "f " + face6v1 + " " + face6v2 + " " + face6v3 + " " + face6v4 + "\n";
 
-		System.out.println("Created LateralPlate2 Shelve with the coordinates :\n" + result);
+		System.out.println("Created  Shelve with the coordinates :\n" + result);
 		return result;
 	}
 
