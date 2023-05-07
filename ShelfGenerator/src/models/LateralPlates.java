@@ -4,7 +4,7 @@ public class LateralPlates {
 
 	private final double zAxis = 20.0;
 
-	private final double width = 4; // thiner than normal shelve but thicker than backplate, gotta look ROBUST
+	protected final static double width = 4; // thiner than normal shelve but thicker than backplate, gotta look ROBUST
 	private double totalLength;
 	private int numShelves;
 	private double shelveLength;
@@ -12,6 +12,9 @@ public class LateralPlates {
 	private double firstSeparation;
 	private double normalSeparation;
 	private double effectiveLength;
+	protected int numberOfCheckpoints;
+
+	// protected double separationSum;
 
 	private double[] checkpoints;
 
@@ -22,62 +25,78 @@ public class LateralPlates {
 		this.shelveLength = shelveLength;
 		effectiveLength = (totalLength - numShelves * 5);
 
-		double separation = effectiveLength / numShelves;
+		
+		this.normalSeparation = effectiveLength / numShelves;
 
-		if (separation < 20) {
-			System.out.println("SEPARATION INFERIOR OF 20 SELECTED! BOOKS MIGHT NOT FIT IN");
-		}
+		System.out.println("Separation going to be used = " + normalSeparation);
 
 		checkpoints = new double[numShelves];
 
 		switch (decission) {
 		case "rounded":
-			System.out.println("You selected rounded.");
-			normalSeparation = separation;
-			setCheckpointsRounded(checkpoints);
+			System.out.println("You selected rounded.\n");
+
+			setCheckpointsRounded();
 			break;
 
 		case "nonsymmetric":
-			System.out.println("You selected nonsymmetric."); // You will accept that the first shelve will take 25%
-			setCheckpointsNotRounded(checkpoints);
-			// space always
-			// TODO: Implement nonsymmetric logic
+			System.out.println(
+					"You selected nonsymmetric. 20% of the total length will be reserved for the first space\n");
 
-			firstSeparation = Math.round((totalLength) * 0.25);
-			normalSeparation = (effectiveLength - firstSeparation) / numShelves;
+			
+
+			firstSeparation = Math.round((totalLength) * 0.20);
+			//normalSeparation = (effectiveLength - firstSeparation) / numShelves;
+			setCheckpointsNotRounded();
 			break;
 		case "notRounded":
-			System.out.println("Settings not accepted");
+			System.out.println("Settings not accepted. \n");
 			// TODO: Implement notRounded logic
 			break;
 		default:
-			System.out.println("Invalid choice.");
+			System.out.println("Skipping...\n");
 		}
 
 	}
 
-	public void setCheckpointsRounded(double[] checkpoints) {
+	public void setCheckpointsRounded() {
 
-		double addition = 0.0;
+		double addition = 5.0;
 
 		for (int i = 0; i < numShelves; i++) {
 
-			checkpoints[i] = addition;
+			numberOfCheckpoints++;
 			addition += normalSeparation;
+
+			checkpoints[i] = addition;
+
+			System.out.println("Checkpoint " + i + ":  implemented at: " + checkpoints[i]);
+
 		}
 
 	}
 
-	public void setCheckpointsNotRounded(double[] checkpoints) {
+	public void setCheckpointsNotRounded() {
 		double addition = 0.0;
-
-		for (int i = 1; i < numShelves ; i++) {
-
-			checkpoints[i] = addition;
-			addition += normalSeparation;
-		}
 		
+		System.out.println("First separation : " + firstSeparation);
+		System.out.println("Next separations : " + normalSeparation);
+		
+		numberOfCheckpoints++;
+		addition += firstSeparation;
 		checkpoints[0] = firstSeparation;
+		System.out.println("Checkpoint " + "0" + ":  implemented at: " + checkpoints[0]);
+		
+
+		for (int i = 1; i < numShelves; i++) {
+
+			numberOfCheckpoints++;
+			addition += normalSeparation;
+			checkpoints[i] = addition;
+
+			System.out.println("Checkpoint " + i + ":  implemented at: " + checkpoints[i]);
+		}
+
 	}
 
 	public double[] getCheckpointsRounded() {
@@ -88,6 +107,8 @@ public class LateralPlates {
 		return checkpoints;
 	}
 
+	public int getCheckpointsAmmount() {return numberOfCheckpoints;}
+	
 	public String getObjVector1() {
 
 		String result = "\n";
@@ -105,26 +126,27 @@ public class LateralPlates {
 		double y3 = totalLength;
 		double z3 = 0.00;
 
-		double x4 = 0.00; 
+		double x4 = width;
 		double y4 = totalLength;
 		double z4 = zAxis;
 
 		double x5 = 0.00;
-		double y5 = 0.00;
-		double z5 = -zAxis;
+		double y5 = BottomShelve.width;
+		double z5 = zAxis;
 
 		double x6 = 0.00;
-		double y6 = 0.00;
+		double y6 = BottomShelve.width;
 		double z6 = 0.00;
 
 		double x7 = width;
-		double y7 = 0.00;
+		double y7 = BottomShelve.width;
 		double z7 = 0.00;
 
 		double x8 = width;
-		double y8 = 0.00;
+		double y8 = BottomShelve.width;
 		double z8 = zAxis;
 
+		result += "\n#Vertex for Lateral Shelve 1\n";
 		result += "v " + x1 + " " + y1 + " " + z1 + "\n";
 		result += "v " + x2 + " " + y2 + " " + z2 + "\n";
 		result += "v " + x3 + " " + y3 + " " + z3 + "\n";
@@ -135,13 +157,14 @@ public class LateralPlates {
 		result += "v " + x8 + " " + y8 + " " + z8 + "\n";
 
 		// Define the face indices for the cube
-		int face1v1 = 1, face1v2 = 2, face1v3 = 3, face1v4 = 4;
-		int face2v1 = 5, face2v2 = 6, face2v3 = 7, face2v4 = 8;
-		int face3v1 = 1, face3v2 = 2, face3v3 = 6, face3v4 = 5;
-		int face4v1 = 2, face4v2 = 3, face4v3 = 7, face4v4 = 6;
-		int face5v1 = 3, face5v2 = 4, face5v3 = 8, face5v4 = 7;
-		int face6v1 = 1, face6v2 = 4, face6v3 = 8, face6v4 = 5;
+		int face1v1 = 25, face1v2 = 26, face1v3 = 27, face1v4 = 28;
+		int face2v1 = 29, face2v2 = 30, face2v3 = 31, face2v4 = 32;
+		int face3v1 = 25, face3v2 = 26, face3v3 = 30, face3v4 = 29;
+		int face4v1 = 26, face4v2 = 27, face4v3 = 31, face4v4 = 30;
+		int face5v1 = 27, face5v2 = 28, face5v3 = 32, face5v4 = 31;
+		int face6v1 = 25, face6v2 = 28, face6v3 = 32, face6v4 = 29;
 
+		result += "\n#Faces for Lateral Shelve 1\n";
 		// Append the face indices to the result string
 		result += "f " + face1v1 + " " + face1v2 + " " + face1v3 + " " + face1v4 + "\n";
 		result += "f " + face2v1 + " " + face2v2 + " " + face2v3 + " " + face2v4 + "\n";
@@ -150,7 +173,7 @@ public class LateralPlates {
 		result += "f " + face5v1 + " " + face5v2 + " " + face5v3 + " " + face5v4 + "\n";
 		result += "f " + face6v1 + " " + face6v2 + " " + face6v3 + " " + face6v4 + "\n";
 
-		System.out.println("Created LateralPlate1 Shelve with the coordinates :\n" + result);
+		System.out.println("\nCreated LateralPlate1 Shelve with the coordinates :\n" + result);
 		return result;
 	}
 
@@ -167,30 +190,31 @@ public class LateralPlates {
 		double y2 = totalLength;
 		double z2 = 0.00;
 
-		double x3 = width + shelveLength;
+		double x3 = shelveLength + width;
 		double y3 = totalLength;
 		double z3 = 0.00;
 
-		double x4 = width + shelveLength;
+		double x4 = shelveLength + width;
 		double y4 = totalLength;
 		double z4 = zAxis;
 
-		double x5 = totalLength;
-		double y5 = 0.00;
+		double x5 = shelveLength;
+		double y5 = BottomShelve.width;
 		double z5 = zAxis;
 
-		double x6 = totalLength;
-		double y6 = 0.00;
+		double x6 = shelveLength;
+		double y6 = BottomShelve.width;
 		double z6 = 0.00;
 
-		double x7 = totalLength + width;
-		double y7 = 0.00;
+		double x7 = width + shelveLength;
+		double y7 = BottomShelve.width;
 		double z7 = 0.00;
 
-		double x8 = totalLength + width;
-		double y8 = 0.00;
+		double x8 = width + shelveLength;
+		double y8 = BottomShelve.width;
 		double z8 = zAxis;
 
+		result += "\n#Vertex for Lateral Shelve 2\n";
 		result += "v " + x1 + " " + y1 + " " + z1 + "\n";
 		result += "v " + x2 + " " + y2 + " " + z2 + "\n";
 		result += "v " + x3 + " " + y3 + " " + z3 + "\n";
@@ -201,13 +225,13 @@ public class LateralPlates {
 		result += "v " + x8 + " " + y8 + " " + z8 + "\n";
 
 		// Define the face indices for the cube
-		int face1v1 = 1, face1v2 = 2, face1v3 = 3, face1v4 = 4;
-		int face2v1 = 5, face2v2 = 6, face2v3 = 7, face2v4 = 8;
-		int face3v1 = 1, face3v2 = 2, face3v3 = 6, face3v4 = 5;
-		int face4v1 = 2, face4v2 = 3, face4v3 = 7, face4v4 = 6;
-		int face5v1 = 3, face5v2 = 4, face5v3 = 8, face5v4 = 7;
-		int face6v1 = 1, face6v2 = 4, face6v3 = 8, face6v4 = 5;
-
+		int face1v1 = 33, face1v2 = 34, face1v3 = 35, face1v4 = 36;
+		int face2v1 = 37, face2v2 = 38, face2v3 = 39, face2v4 = 40;
+		int face3v1 = 33, face3v2 = 34, face3v3 = 38, face3v4 = 37;
+		int face4v1 = 34, face4v2 = 35, face4v3 = 39, face4v4 = 38;
+		int face5v1 = 35, face5v2 = 36, face5v3 = 40, face5v4 = 39;
+		int face6v1 = 33, face6v2 = 36, face6v3 = 40, face6v4 = 37;
+		result += "\n#Faces for Lateral Shelve 2\n";
 		// Append the face indices to the result string
 		result += "f " + face1v1 + " " + face1v2 + " " + face1v3 + " " + face1v4 + "\n";
 		result += "f " + face2v1 + " " + face2v2 + " " + face2v3 + " " + face2v4 + "\n";
