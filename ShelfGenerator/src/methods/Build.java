@@ -1,46 +1,78 @@
 package methods;
 
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import models.BackPlate;
+import models.BottomShelve;
+import models.LateralPlates;
 import models.Shelf;
+import models.Shelve;
 import models.TopShelve;
 
 public class Build {
 
-	public void build(Shelf shelf) throws InterruptedException {
+	public static void build(Shelf shelf, String decissionIn) throws InterruptedException {
+		String decission = decissionIn;
 		System.out.println("Building " + shelf.toString() + "\n\n\n");
+		Shelve shelve;
+		String vertexString = "";
+		double[] checkpoints = null;
 		try {
 
-			TopShelve topShelveOBJ = new TopShelve(shelf.getTotalLength(), shelf.getShelveLength());
-
 			System.out.println("Generating top shelve....\n");
-			Thread.sleep(100);
-			topShelveOBJ.getObjVector();
+			Thread.sleep(1000);
+			TopShelve topShelveOBJ = new TopShelve(shelf.getTotalLength(), shelf.getShelveLength());
+			vertexString += topShelveOBJ.getObjVector();
 			System.out.println("topShelve generated sucessfully ref: " + topShelveOBJ.toString() + "\n\n");
 
 			System.out.println("Generating bottom shelve....\n");
-			Thread.sleep(100);
+			Thread.sleep(1000);
+			BottomShelve bottomShelveOBJ = new BottomShelve(shelf.getTotalLength(), shelf.getShelveLength());
+			vertexString += bottomShelveOBJ.getObjVector();
+			System.out.println("bottomShelve generated sucessfully ref: " + bottomShelveOBJ.toString() + "\n\n");
 
-			System.out.println("Generating lateral1 material....\n");
-			System.out.println("Generating lateral2 material....\n");
-			Thread.sleep(100);
+			System.out.println("Generating back plate.....\n");
+			Thread.sleep(2900);
+			BackPlate backPlateOBJ = new BackPlate(shelf.getTotalLength(), shelf.getShelveLength());
+			vertexString += backPlateOBJ.getObjVector();
+			System.out.println("backPlate generated sucessfully ref: " + backPlateOBJ.toString() + "\n\n");
+
+			System.out.println("Generating lateral materials....\n");
+			Thread.sleep(3800);
+			LateralPlates lateralPlates = new LateralPlates(shelf.getTotalLength(), shelf.getNumShelves(),
+					shelf.getShelveLength(), decission);
+			vertexString += lateralPlates.getObjVector1();
+			vertexString += lateralPlates.getObjVector2();
+			System.out.println("lateralPlates generated sucessfully ref: " + lateralPlates.toString() + "\n\n");
 
 			System.out.println("Calculating separation between shelves....\n");
+			Thread.sleep(2000);
 			shelf.setMinSeparation(shelf.getTotalLength(), shelf.getNumShelves(), shelf.getThickness());
-			Thread.sleep(100);
-			System.out.println("Separation implemented for the formatting: " + shelf.getMinseparation() + "\n");
+			Thread.sleep(1000);
+			System.out.println("Separation recommended for the formatting: " + shelf.getMinseparation() + "\n\n");
 
-			System.out.println("Generating bottom shelve....\n");
+			if (decission.equals("nonsymmetric")) {
+				checkpoints = lateralPlates.getCheckpointsNotRounded();
+			} 
+			
+			if(decission.equals("rounded")){
+				checkpoints = lateralPlates.getCheckpointsRounded();
+			}
+
+			for (int i = 0; i < lateralPlates.getCheckpointsAmmount(); i++) {
+				shelve = new Shelve(shelf.getTotalLength(), shelf.getShelveLength(), checkpoints[i], i );
+				vertexString += shelve.getObjVector();
+			}
+
+			System.out.println("\n\nGenerating all the Shelves models .. .. ..\n\n\n ");
+			Thread.sleep(3800);
 
 		} catch (Exception e) {
 			System.out.println("ERROR TRYING TO CREATE THE 3D OBJECT");
 			e.printStackTrace();
 		}
-
-		String vertexString = "";
 
 		String fileName = "result.txt";
 
