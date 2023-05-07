@@ -14,6 +14,7 @@ public class Shelf {
 	private final double thickness = 5.0; // each shelf has a prefab thickness
 	private final double xAxis = 20.0; // each shelf is 20cm wide
 	private double shelveLength;
+	
 	// public double width;
 	Scanner sc = new Scanner(System.in);
 
@@ -58,9 +59,20 @@ public class Shelf {
 	public double getxAxis() {
 		return xAxis;
 	}
-	
-	public void setMinSeparation(double totalLength, int numShelves, double thickness){
-		this.minseparation = (int) (totalLength / (numShelves - (2 * thickness)));
+
+	public void setMinSeparation(double totalLength, int numShelves, double thickness) {
+		this.minseparation = (int) ((totalLength - (2 * thickness)) / (numShelves + 1));
+		/*
+		 * Restamos dos veces el grosor de las arandelas (las 2 arandelas que están
+		 * arriba y abajo del todo) del total de la longitud. Esto es para excluir el
+		 * espacio ocupado por las arandelas del cálculo de la separación. Luego
+		 * dividimos el resultado entre el número total de estantes menos uno
+		 * (numShelves - 1) para obtener la separación entre los estantes.
+		 */
+		if (this.minseparation < 20) {
+			System.out.println("WARNING: Separation between shelves might be too low to fit books (<20cm) \n"
+					+ "You Might consider changing your values \n");
+		}
 	}
 
 	@Override
